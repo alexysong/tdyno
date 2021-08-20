@@ -50,6 +50,8 @@ The `examples` in the `examples/` folder are the easiest places to get started w
     It's recommended that you go through `fdtd_2d.py` first, then move on to other examples. 
     
     `fdtd_2d.py` contains a detailed explanation of the basic functionalities of the package. It contains: point sources and a TF/SF source with different source temporal profiles, PML absorbing boundary condition, and different types of materials and geometries to build a structure.
+    
+    https://user-images.githubusercontent.com/55603472/130163410-57c621ff-9f2d-4a27-a8fb-824294506afd.mp4
 
 *   `ring_coupler.py`
 
@@ -60,6 +62,10 @@ The `examples` in the `examples/` folder are the easiest places to get started w
     This example contains a waveguide under dynamic modulations. The modulation can be in the refractive index or in the gain/loss.
 
     This example also contain several point monitors to measure wave intensities and calculate the spectrum.
+
+
+    https://user-images.githubusercontent.com/55603472/130161582-5258d4f3-cc57-4e5d-8354-ffa2e242c366.mp4
+
 
 
 ## Citing
