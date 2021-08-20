@@ -63,7 +63,7 @@ The `examples` in the `examples/` folder are the easiest places to get started w
 
     This example also contain several point monitors to measure wave intensities and calculate the spectrum.
 
-    https://user-images.githubusercontent.com/55603472/130161582-5258d4f3-cc57-4e5d-8354-ffa2e242c366.mp4
+    https://user-images.githubusercontent.com/55603472/130178495-1d9e19fb-0cf3-4a73-9e2b-c7f018962742.mp4
 
 ## Citing
 
