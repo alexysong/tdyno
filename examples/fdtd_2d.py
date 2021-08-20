@@ -64,7 +64,7 @@ dt = 1. / 2.1 * np.sqrt(dx ** 2 + dy ** 2)
 
 # Total time steps for each simulation.
 # After it stops, you can click "play/pause" to continue for another Nt.
-Nt = 3100
+Nt = 3000
 
 # solving mode
 mode = 'HDE'  # for non-magnetic (permeability is 1 throughout), use 'HDE', otherwise, use 'BHDE'
@@ -155,7 +155,7 @@ wl = 2.  # wavelength
 omega = 2. * np.pi / wl  # frequency
 phi = np.pi / 2.  # phase
 tau = 4.  # how fast the wave ramps up.
-t_before = 80.  # total time before reaching steady amplitude
+t_before = 60.  # total time before reaching steady amplitude
 cw = tdyno.add_source_temporal('cw', omega=omega, phase=phi, tau=tau, t_before=t_before)
 
 # a wave packet, harmonic wave (carrier) modulated by a Gaussian profile
@@ -178,7 +178,7 @@ tdyno.add_point_source(x=x_sc, y=y_sc, amp=amp, t_profile=pulse)
 x_sc = 2.5  # positions
 y_sc = 7.5
 amp = 20  # amplitude of the source
-tdyno.add_point_source(x=x_sc, y=y_sc, amp=amp, t_profile=cw)
+tdyno.add_point_source(x=x_sc, y=y_sc, amp=amp, t_profile=packet)
 
 # TFSF Source
 xmin_ts = 2.  # the corners of the TFSF source
@@ -188,10 +188,10 @@ ymax_ts = 8
 # kx and ky only determine the wave direction. The magnitude of the wave vector in vacuum is automatically set by the frequency in the temporal profile.
 kx = 0.25
 ky = 0.5
-amp = 1.  # wave amplitude
+amp = 0.5  # wave amplitude
 # `sides` defaults to be `'all'`. Can also be 'top', 'bottom', 'left' or 'right' for uni-directional plane wave sources.
 sides = 'all'
-tdyno.add_tfsf_source(xmin=xmin_ts, xmax=xmax_ts, ymin=ymin_ts, ymax=ymax_ts, kx=kx, ky=ky, amp=amp, t_profile=packet, sides=sides)
+tdyno.add_tfsf_source(xmin=xmin_ts, xmax=xmax_ts, ymin=ymin_ts, ymax=ymax_ts, kx=kx, ky=ky, amp=amp, t_profile=cw, sides=sides)
 
 # ============   PML   ============
 poly_order = 3.5  # pml polynomial order

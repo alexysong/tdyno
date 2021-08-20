@@ -51,6 +51,8 @@ The `examples` in the `examples/` folder are the easiest places to get started w
     
     `fdtd_2d.py` contains a detailed explanation of the basic functionalities of the package. It contains: point sources and a TF/SF source with different source temporal profiles, PML absorbing boundary condition, and different types of materials and geometries to build a structure.
 
+    https://user-images.githubusercontent.com/55603472/130164103-d1c45fbd-609e-464f-bd0e-9ee3e0e0fe7e.mp4
+
 *   `ring_coupler.py`
 
     This is an example of a ring resonator coupled to input/output waveguides.
@@ -61,6 +63,7 @@ The `examples` in the `examples/` folder are the easiest places to get started w
 
     This example also contain several point monitors to measure wave intensities and calculate the spectrum.
 
+    https://user-images.githubusercontent.com/55603472/130161582-5258d4f3-cc57-4e5d-8354-ffa2e242c366.mp4
 
 ## Citing
 
