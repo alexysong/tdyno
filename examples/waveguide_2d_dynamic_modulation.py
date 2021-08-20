@@ -54,8 +54,17 @@ tdyno.add_structure(shape='rectangle',
                     epsi=epsi_w)
 
 
+# Dynamic modulations can be defined in a rectangle shape. We have the choice of index or gain/loss modulations.
+# Index modulation is done by modulating the real part of permittivity.
+# Gain/loss modulation is done by modulating the conductivity of the material.
+# Arbitrary modulation frequency, wave vector, amplitude and phase can be set.
+# Below are two examples of dynamic modulated structures, one in the index and the other in gain/loss.
+# In these examples, dynamic modulations couple an even mode and an odd mode of the waveguide.
+# Comment/uncomment the corresponding sections to see effects.
+
+
 # # ------------   index modulations   ------------
-# # calculate omega and q for modulation
+# # calculate omega (frequency) and q (wave vector) for modulation
 # k0 = 2 * np.pi / d_slab * 0.4989  # even mode
 # omega0 = 2 * np.pi / d_slab * 0.165
 # k1 = 2 * np.pi / d_slab * 0.3924  # odd mode
@@ -88,7 +97,7 @@ tdyno.add_structure(shape='rectangle',
 
 
 # ------------   gain and loss modulations   ------------
-# calculate omega and q for modulation
+# calculate omega (frequency) and q (wave vector) for modulation
 k0 = 2 * np.pi / d_slab * 0.4989  # even mode
 omega0 = 2 * np.pi / d_slab * 0.165
 k1 = 2 * np.pi / d_slab * 0.3924  # odd mode
