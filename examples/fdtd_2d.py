@@ -155,7 +155,7 @@ wl = 2.  # wavelength
 omega = 2. * np.pi / wl  # frequency
 phi = np.pi / 2.  # phase
 tau = 4.  # how fast the wave ramps up.
-t_before = 60.  # total time before reaching steady amplitude
+t_before = 45.  # total time before reaching steady amplitude
 cw = tdyno.add_source_temporal('cw', omega=omega, phase=phi, tau=tau, t_before=t_before)
 
 # a wave packet, harmonic wave (carrier) modulated by a Gaussian profile
@@ -163,7 +163,7 @@ wl = 2.  # carrier wavelength
 omega = 2. * np.pi / wl  # carrier frequency
 t_span = 0.  # after reaching the Gaussian peak, keep amplitude at this level for t_spn amount of time
 tau = 4.  # how fast the wave ramps up.
-t_before = 40.  # total time before reaching peak amplitude
+t_before = 25.  # total time before reaching peak amplitude
 packet = tdyno.add_source_temporal('packet', omega=omega, t_span=t_span, tau=tau, t_before=t_before)
 
 # ============   set up sources   ============
