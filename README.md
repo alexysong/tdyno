@@ -50,7 +50,7 @@ The `examples` in the `examples/` folder are the easiest places to get started w
     It's recommended that you go through `fdtd_2d.py` first, then move on to other examples. 
     
     `fdtd_2d.py` contains a detailed explanation of the basic functionalities of the package. It contains: point sources and a TF/SF source with different source temporal profiles, PML absorbing boundary condition, and different types of materials and geometries to build a structure.
-
+    
     https://user-images.githubusercontent.com/55603472/130164103-d1c45fbd-609e-464f-bd0e-9ee3e0e0fe7e.mp4
 
 *   `ring_coupler.py`
