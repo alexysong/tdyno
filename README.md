@@ -1,4 +1,4 @@
-**T-Dyno** is a 2D finite-difference time-domain (FDTD) package that is capable of applying dynamic modulations in both the real and the imaginary parts of the permittivity, i.e. index modulations and gain/loss modulations.
+**T-Dyno** is a 2D finite-difference time-domain (FDTD) package. Apart from conventional FDTD functionalities, TDyno is capable of applying dynamic modulations in both the real and the imaginary parts of the permittivity, i.e. having index modulations and gain/loss modulations.
 
 ## Features
 T-Dyno natively supports the following features:
