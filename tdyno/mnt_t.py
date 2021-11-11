@@ -1,10 +1,5 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-"""
-Created by Alex Y. Song, Dec. 2017
-
-"""
 
 import numpy as np
 import matplotlib as mpl

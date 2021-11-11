@@ -2,10 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Created by Alex Y. Song, Jul 2017
-
 In this example, we have a waveguide under index modulations or gain-loss modulations. Comment/uncomment the corresponding sections to see the effect of each.
-
 """
 
 import numpy as np

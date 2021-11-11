@@ -1,10 +1,4 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-
-"""
-Created by Alex Y. Song, June 2017
-
-"""
 
 
 import matplotlib as mpl

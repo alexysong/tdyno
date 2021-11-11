@@ -2,10 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Created by Alex Y. Song, Jul 2017
-
 This example contain a ring resonator with input/output coupling waveguides.
-
 """
 
 import numpy as np

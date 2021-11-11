@@ -1,10 +1,4 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-
-"""
-Created by Alex Y. Song, Jul 2017
-
-"""
 
 
 class Cnst:

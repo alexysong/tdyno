@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 """
-Created by Alex Y. Song.
-
 ## This is an example FDTD simulation. It contains structures in different shapes and materials. Wave is incident by point sources and a Total-field scattered-field (TF/SF) source. CPML boundaries to absorb the scattered waves.
 
 ## What you do: run this file. A figure window is shown, which contains a simple graphical user-interface (GUI):

@@ -1,10 +1,5 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-"""
-Created by Alex Y. Song.
-
-"""
 
 import scipy.sparse as sps
 

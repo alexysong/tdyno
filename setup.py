@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setup(
     name='tdyno',
-    version='0.1',
+    version='0.1.1',
     description='FDTD with dynamic modulations in the refractive index or the gain/loss in materials.',
     long_description=readme,
     long_description_content_type="text/markdown",

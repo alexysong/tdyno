@@ -1,7 +1,4 @@
-"""
-Created by Alex Y. Song, 2021.
-
-"""
+# -*- coding: utf-8 -*-
 
 import numpy as np
 from matplotlib import pyplot as plt

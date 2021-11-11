@@ -1,11 +1,4 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-
-"""
-Created by Alex Y. Song, Sep 2017
-
-Structure 2d in FDTD.
-"""
 
 
 import numpy as np
