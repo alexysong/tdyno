@@ -211,11 +211,11 @@ class MtrBsc(object):
                         other kwargs not related to materials
         """
 
-        if type(epsi) is float:
+        if not hasattr(epsi, '__len__'):
             epsi = np.eye(3, 3) * epsi
         elif np.array(epsi).ndim == 1:
             epsi = np.diag(epsi)
-        if type(mu) is float:
+        if not hasattr(mu, '__len__'):
             mu = np.eye(3, 3) * mu
         elif np.array(mu).ndim == 1:
             mu = np.diag(mu)

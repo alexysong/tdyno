@@ -97,18 +97,25 @@ class TDyno:
         For 'wedge',        specify `xcenter`, `ycenter`, outer `radius`, `width`, and `angle1` and `angle2`.
 
         The type of material for the structure is specified in `kind`, which can be one of the following:
+
         'dielectric'|'Lorentz'|'metal'|'index modulated'|'gain-loss modulated'|‘Lorentz modulated'
+
         'dielectric' means dispersionless dielectric. It needs the following material parameters:
             `epsi`, `mu`, `conductivity` (optional).
+
         'Lorentz' means dielectric with Lorentz model. It needs the following material parameters:
             `epsi`, `mu`, `res_omegas`, `d_epsi`, `gammas`.
+
         'metal' means metallic material with Drude model. It needs the following material parameters:
             `epsi`, `mu`, `res_omegas`, `gammas`.
+
         'index modulated' means dynamic modulation in the refractive index. It needs the following material parameters:
             `epsi`, `mu`, `m_amp`, `m_omega`, `m_q`, `m_phase`.
+
         'loss-gain modulated' means dynamic modulation in the loss and gain. It needs the following material parameters:
             `epsi`, `mu`, 'conductivity' (optional), `m_amp`, `m_omega`, `m_q`, `m_phase`.
-        ‘Lorentz modulated' means Lorentz model with modulated resonance strengh. It needs the following material parameters:
+
+        'Lorentz modulated' means Lorentz model with modulated resonance strengh. It needs the following material parameters:
             `epsi`, `mu`, `res_omegas`, `d_epsi`, `gammas`, `m_amp`, `m_omega`, `m_q`, `m_phase`.
 
         Parameters
