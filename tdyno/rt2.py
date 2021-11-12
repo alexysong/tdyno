@@ -426,9 +426,9 @@ class RT2:
 
         if self.psd:
             self.t += 1
-            t1 = time.clock()
+            t1 = time.process_time()
             self.uf()
-            t2 = time.clock()
+            t2 = time.process_time()
             if self.mnts is not None and self.mnts:
                 if self.plrz == 'Hz':
                     for mnt in self.mnts:
@@ -436,16 +436,16 @@ class RT2:
                 else:
                     for mnt in self.mnts:
                         mnt.rnf(self.Ez)
-            t3 = time.clock()
+            t3 = time.process_time()
             self.up()
             if self.mnts is not None and self.mnts:
                 for mnt in self.mnts:
                     mnt.up()
             self.fig.canvas.flush_events()
-            t4 = time.clock()
+            t4 = time.process_time()
             if self.if_vid_rec and not self.if_vid_rec_ps:
                 self.vid_wtr.grab_frame()
-            t5 = time.clock()
+            t5 = time.process_time()
             print('Computation time: {:.5f} | Monitor time: {:.5f} | Plotting time: {:.5f}'.format((t2 - t1), (t3 - t2), (t4 - t3)))
 
     def k_p(self, event):
@@ -559,9 +559,9 @@ class RT2:
         while ttt < self.Nt:
             # print(self.t * self.dt)
             if not self.psd:
-                t1 = time.clock()
+                t1 = time.process_time()
                 self.uf()
-                t2 = time.clock()
+                t2 = time.process_time()
                 if self.mnts is not None and self.mnts:
                     if self.plrz == 'Hz':
                         for mnt in self.mnts:
@@ -569,7 +569,7 @@ class RT2:
                     else:
                         for mnt in self.mnts:
                             mnt.rnf(self.Ez)
-                t3 = time.clock()
+                t3 = time.process_time()
                 if self.t % self.skp == 0:
                     self.up()
                     if self.mnts is not None and self.mnts:
@@ -577,11 +577,11 @@ class RT2:
                             mnt.up()
                     # plt.pause(0.0001)
                     self.fig.canvas.flush_events()
-                t4 = time.clock()
+                t4 = time.process_time()
                 if self.t % self.skp == 0:
                     if self.if_vid_rec and not self.if_vid_rec_ps:
                         self.vid_wtr.grab_frame()
-                t5 = time.clock()
+                t5 = time.process_time()
                 print('Computation time: {:.5f} | Monitor time: {:.5f} | Plotting time: {:.5f}'.format((t2-t1), (t3-t2), (t4 - t3)))
                 ttt += 1
                 self.t += 1

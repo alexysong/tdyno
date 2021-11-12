@@ -133,6 +133,23 @@ class TSS2:
         xx_n, yy_n = [st.xx_n, st.yy_n]
         self.xx_n, self.yy_n = (xx_n, yy_n)
         xmin_ts_n, xmax_ts_n, ymin_ts_n, ymax_ts_n = [int(np.floor(cor / dcor)) for cor, dcor in zip([xmin_ts + st.dx / 1e4 - st.xmin, xmax_ts + st.dx / 1e4 - st.xmin, ymin_ts + st.dx / 1e4 - st.ymin, ymax_ts + st.dx / 1e4 - st.ymin], [st.dx, st.dx, st.dy, st.dy])]
+        if xmin_ts_n < xx_n.min():
+            warn('Source left boundary outside of the solving space. It has been reset to the left edge of the solving space.')
+            xmin_ts_n = xx_n.min()
+        if xmax_ts_n > xx_n.max():
+            warn('Source right boundary outside of the solving space. It has been reset to the right edge of the solving space.')
+            xmax_ts_n = xx_n.max()
+        if ymin_ts_n < yy_n.min():
+            warn('Source bottom boundary outside of the solving space. It has been reset to the bottom edge of the solving space.')
+            ymin_ts_n = yy_n.min()
+        if ymax_ts_n > yy_n.max():
+            warn('Source top boundary outside of the solving space. It has been reset to the top edge of the solving space.')
+            ymax_ts_n = yy_n.max()
+
+        for min, max, _n in ((xmin_ts_n, xmax_ts_n, xx_n), (ymin_ts_n, ymax_ts_n, yy_n)):
+            if min < _n.min():
+                min
+
         self.xmin_ts_n, self.xmax_ts_n, self.ymin_ts_n, self.ymax_ts_n = [xmin_ts_n, xmax_ts_n, ymin_ts_n, ymax_ts_n]
 
         # bulk indexing
@@ -260,8 +277,8 @@ class TSS2:
         if if_ndc:
             if omg_ndc:
                 omg = omg_ndc
-            elif hasattr(g, 'omg'):
-                omg = g.omg
+            elif hasattr(self.g, 'omg'):
+                omg = self.g.omg
             else:
                 omg = self.c0 / .2
             n = np.sqrt(self.epsi * self.mu)
@@ -373,8 +390,8 @@ class TSS2:
             self.Dx_s = self.Dx_s_a
             self.Dy_s = self.Dy_s_a
 
-            # t1 = time.clock()
-            # t2 = time.clock()
+            # t1 = time.process_time()
+            # t2 = time.process_time()
             # print(t2-t1)
 
         elif self.plrz == 'Ez':
