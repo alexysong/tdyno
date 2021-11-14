@@ -200,7 +200,7 @@ class Bx2:
 
 
 class MtrBsc(object):
-    def __init__(self, epsi=1., mu=1., **kwargs):
+    def __init__(self, epsi=None, mu=None, **kwargs):
         """
         Basic material.
 
@@ -210,6 +210,10 @@ class MtrBsc(object):
         kwargs      :
                         other kwargs not related to materials
         """
+        if epsi is None:
+            epsi = 1.
+        if mu is None:
+            mu = 1.
 
         if not hasattr(epsi, '__len__'):
             epsi = np.eye(3, 3) * epsi

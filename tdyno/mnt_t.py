@@ -6,8 +6,10 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button, CheckButtons, TextBox
 from matplotlib.gridspec import GridSpec
+from warnings import warn
 
-from .s2t import S2T
+from tdyno.s2t import S2T
+from tdyno.sig_spct import SigSpct
 
 
 class MntPntAmp:
@@ -35,6 +37,7 @@ class MntPntAmp:
         ref_spctrm  :   ndarray[float]
                         reference spectrum. If supplied, the shown spectrum will be divided by this.
         """
+        warn("This class is deprecated. Use `MntMltPntAmp` instead.")
         self.st = st
         self.dt = dt
         self.td = td
@@ -185,7 +188,7 @@ class MntPntAmp:
 
 
 class MntMltPntAmp:
-    def __init__(self, st, dt=1., td=0, coords=None, wts=None, omin=0., omax=None, n_o=1000, nmf=1., psd=True, flx=False, ref_spctrm=None):
+    def __init__(self, st, coords, dt=None, td=None, wts=None, omin=None, omax=None, n_o=None, nmf=None, show=None, ref_spctrm=None):
         """
         Monitor the amplitude of field on multi points. Record the amplitudes on each, do weighted sum, and do Fourier Transform.
 
@@ -194,7 +197,7 @@ class MntMltPntAmp:
                         time resolution
         td          :   int
                         time delay. Won't start Fourier Transform until this time step.
-        coords      :   list[Tuple]
+        coords      :   list[tuple[float, float]]
                         coordinates of the points to monitor. Each element is a tuple of (x, y)
         wts         :   list
                         weights, the amplitudes of the monitored points are multiplied by these weights, and then add up
@@ -204,29 +207,38 @@ class MntMltPntAmp:
                         number of frequency points
         nmf         :   float
                         normalization factor for spectrum
-        psd         :   bool
-                        if true, plot the power spectral density.
-        flx         :   bool
-                        if true, plot the flux. Overrides psd.
+        show        :   str
+                        {'energy spectral density', 'power spectral density', 'flux spectral density', 'flux rate spectral density'}
+
+                        showing what kind of Fourier Transform of the field.
+
+                        "flux" means photon flux, i.e. dividing intensity by frequency.
+
+        if_esd      :   bool
+                        if true, plot the energy spectral density.
+        if_psd      :   bool
+                        if true, plot the energy spectral density.
+        if_flx      :   bool
+                        if true, plot the flux. Overrides if_esd.
         ref_spctrm  :   ndarray[float]
                         reference spectrum. If supplied, the shown spectrum will be divided by this.
         """
-        self.st = st
-        self.dt = dt
-        self.td = td
-        self.nmf = nmf
-        self.psd = psd
-        self.flx = flx
-        self.ref_spctrm = ref_spctrm
         if wts is None:
             wts = [1.]
         self.wts = wts
+
+        if (show != 'energy spectral density') and (show != 'power spectral density') and (show != 'flux spectral density') and (show != 'flux rate spectral density'):
+            warn('the choice of the spectrum to show not understood. Default to energy spectral density', UserWarning)
+            show = 'energy spectral density'
+        self.show = show
 
         self.coords = []
         self.idx_mnts = []
         self.f_mnts = []
         if coords is None:
             coords = [(0., 0.)]
+        if not hasattr(coords[0], '__len__'):
+            coords = [coords]
         for (x, y) in coords:
             if x >= st.xmax:
                 x = st.xmax - st.xres
@@ -243,34 +255,10 @@ class MntMltPntAmp:
             idx_mnt = (st.xx_n == x_n) * (st.yy_n == y_n)
             self.idx_mnts.append(idx_mnt)
 
-            # Initialize recorded field at each location of the monitors
-            self.f_mnts.append(np.array([]))
-
         # Initialize weighted sum of recorded field
-        self.f_mnt_ws = np.array([])
+        self.s_ws = SigSpct(dt, td, omin, omax, n_o, nmf, ref_spctrm)
 
-        # current time step
-        self.nt = 0
-
-        # list of time steps
-        self.t_n = np.array([])
-
-        # frequency space
-        self.omin = omin
-        if omax is None:
-            self.omax = np.pi / self.dt
-        else:
-            self.omax = omax
-        self.omg = np.linspace(self.omin, self.omax, n_o)
-
-        # calculate the Fourier transform kernel
-        self.knl = np.exp(-1j * self.omg * self.dt)
-
-        # Initialize the Fourier transform of the field
-        self.F_mnt = np.zeros(n_o) * 1j
-        self.F_mnt_sq = np.zeros(n_o)
-        self.F_mnt_flx = np.zeros(n_o)
-        self.F_sh = np.zeros(n_o)
+        self.F = None  # spectrum shown
 
         # Start plotter
         mpl.rcParams['mathtext.fontset'] = 'cm'
@@ -284,18 +272,17 @@ class MntMltPntAmp:
         ax_f.set_ylabel('Field Intensity', fontsize=fontsize_label)
         ax_f.tick_params(axis='both', which='major', labelsize=fontsize_axis)
         self.ax_f = ax_f
-        self.ln_f = ax_f.plot(self.t_n*self.dt, self.f_mnt_ws)[0]
+        self.ln_f = ax_f.plot(self.s_ws.ts, self.s_ws.f)[0]
 
         ax_F = self.fig.add_subplot(gs[1, 1])
         ax_F.set_xlabel('$\omega$', fontsize=fontsize_label)
-        if self.flx:
-            ax_F.set_ylabel('Flux', fontsize=fontsize_label)
-        else:
-            ax_F.set_ylabel('Power Spectral Density', fontsize=fontsize_label)
+
+        ax_F.set_ylabel(self.show, fontsize=fontsize_label)
+
         ax_F.tick_params(axis='both', which='major', labelsize=fontsize_axis)
         self.ax_F = ax_F
-        self.ln_F = ax_F.plot(self.omg, np.square(np.abs(self.F_mnt)))[0]
-        ax_F.set_xlim([self.omg.min(), self.omg.max()])
+        self.ln_F = ax_F.plot(self.s_ws.omg, self.s_ws.esd)[0]
+        ax_F.set_xlim([self.s_ws.omin, self.s_ws.omax])
 
         self.pchs = []
         for (x, y) in self.coords:
@@ -345,27 +332,10 @@ class MntMltPntAmp:
         -------
 
         """
-        self.t_n = np.append(self.t_n, self.nt)
-
         f_n_ws = 0.
-        for m, (idx, f_mnt, wt) in enumerate(zip(self.idx_mnts, self.f_mnts, self.wts)):
-            f_n = f[idx]
-            f_n_ws += wt * f_n
-            self.f_mnts[m] = np.append(f_mnt, f_n)
-        self.f_mnt_ws = np.append(self.f_mnt_ws, f_n_ws)
-
-        if self.nt > self.td:
-            self.F_mnt += (self.knl ** self.nt) * f_n_ws * self.dt
-            self.F_mnt_sq = np.square(np.abs(self.F_mnt)) / self.nmf
-            if self.flx:
-                self.F_mnt_flx = self.F_mnt_sq / self.omg
-                self.F_sh = self.F_mnt_flx
-            else:
-                self.F_sh = self.F_mnt_sq
-            if self.ref_spctrm is not None:
-                self.F_sh /= self.ref_spctrm
-
-        self.nt += 1
+        for idx, w in zip(self.idx_mnts, self.wts):
+            f_n_ws += w * f[idx]
+        self.s_ws.rnf(f_n_ws)
 
     def up(self):
         """
@@ -375,39 +345,37 @@ class MntMltPntAmp:
         -------
 
         """
-        self.ln_f.set_data(self.t_n*self.dt, self.f_mnt_ws)
-        xmin = self.t_n.min() * self.dt
-        xmax = self.t_n.max() * self.dt
-        ymin = self.f_mnt_ws.min()
-        ymax = self.f_mnt_ws.max()
-        self.ax_f.set_xlim([xmin, xmax])
-        self.ax_f.set_ylim([ymin, ymax])
+        self.ln_f.set_data(self.s_ws.ts, self.s_ws.f)
+        self.ax_f.set_xlim([self.s_ws.ts[0], self.s_ws.ts[-1]])
+        self.ax_f.set_ylim([min(self.s_ws.f), max(self.s_ws.f)])
 
         self.ax_f.draw_artist(self.ax_f.patch)
         self.ax_f.draw_artist(self.ln_f)
-        self.fig.canvas.flush_events()
 
-        self.ln_F.set_ydata(self.F_sh)
-        self.ax_F.set_ylim([self.F_sh.min(), self.F_sh.max()])
+        if self.show == 'power spectral density':
+            F = self.s_ws.psd
+        elif self.show == 'flux spectral density':
+            F = self.s_ws.flx
+        elif self.show == 'flux rate spectral density':
+            F = self.s_ws.flxr
+        else:
+            F = self.s_ws.esd
+        self.F = F
+
+        self.ln_F.set_ydata(F)
+        self.ax_F.set_ylim([min(F), max(F)])
 
         self.ax_F.draw_artist(self.ax_F.patch)
         self.ax_F.draw_artist(self.ln_F)
-        self.fig.canvas.flush_events()
 
+        self.fig.canvas.flush_events()
         self.fig.canvas.update()
 
     def cf(self):
         """
         Clear fields.
-        Returns
-        -------
-
         """
-        self.nt = 0
-        self.t_n = np.array([])
-        self.f_mnts = [np.array([])] * len(self.coords)
-        self.f_mnt_ws = np.array([])
-        self.F_mnt = np.zeros(self.F_mnt.size) * 1j
+        self.s_ws.reset()
 
     def sv_rec(self, event):
         """
@@ -418,7 +386,7 @@ class MntMltPntAmp:
 
         """
 
-        data = np.concatenate([[self.t_n], [self.f_mnt_ws]], axis=0).T
+        data = np.concatenate([[self.s_ws.ts], [self.s_ws.f]], axis=0).T
         ttl = self.rec_ttl + '_{:03d}.txt'.format(self.rec_n)
         np.savetxt(ttl, data)
         self.rec_n += 1
@@ -447,7 +415,7 @@ class MntMltPntAmp:
 
         """
 
-        data = np.concatenate([[self.omg], [self.F_sh]], axis=0).T
+        data = np.concatenate([[self.s_ws.omg], [self.F]], axis=0).T
         ttl = self.spct_ttl + '_{:03d}.txt'.format(self.spct_n)
         np.savetxt(ttl, data)
         self.spct_n += 1
@@ -466,6 +434,7 @@ class MntMltPntAmp:
         """
         self.spct_ttl = tx
         self.spct_n = 0
+
 
 if __name__ == '__main__':
 
@@ -492,7 +461,7 @@ if __name__ == '__main__':
     dt = 0.01
     x_mnt = 20.
     y_mnt = 0.2
-    mnt = MntPntAmp(st, x=x_mnt, y=y_mnt, dt=dt, omin=0.8, omax=1.5)
+    mnt = MntMltPntAmp(st, (x_mnt, y_mnt), dt=dt, td=0., omin=0.8, omax=1.5)
 
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)

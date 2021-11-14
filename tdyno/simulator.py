@@ -437,7 +437,7 @@ class TDyno:
         """
         self.md = mode
 
-    def add_point_monitors(self, delay=0., coords=None, weights=None, omega_min=0., omega_max=2., n_omega=100, norm_factor=1., power=True, flux=False, refer_spectrum=None):
+    def add_point_monitors(self, coords, delay=0., weights=None, omega_min=0., omega_max=2., n_omega=100, norm_factor=1., flux=False, refer_spectrum=None):
         """
         Add monitors to monitor the amplitude of the field on multi points. Record the amplitudes on each, do weighted sum, and do Fourier Transform.
         The monitors only record Ez and Hz for the two corresponding polarizations, respectively.
@@ -455,10 +455,8 @@ class TDyno:
                                     number of frequency points
         norm_factor             :   float
                                     normalization factor for spectrum
-        power                   :   bool
-                                    if true, plot the power spectral density.
         flux                    :   bool
-                                    if true, plot the flux. Overrides `power`.
+                                    if true, plot the flux spectral density. Otherwise plot the power spectral density
         refer_spectrum          :   ndarray[float]
                                     reference spectrum. If supplied, the shown spectrum will be divided by this. This is for convenience, for example, if want to see transmission spectrum.
 
@@ -466,7 +464,11 @@ class TDyno:
         -------
 
         """
-        mnt = MntMltPntAmp(self.st, dt=self.dt, td=delay, coords=coords, wts=weights, omin=omega_min, omax=omega_max, n_o=n_omega, nmf=norm_factor, psd=power, flx=flux, ref_spctrm=refer_spectrum)
+        if flux is True:
+            show = 'flux spectral density'
+        else:
+            show = 'energy spectral density'
+        mnt = MntMltPntAmp(self.st, coords, dt=self.dt, td=delay, wts=weights, omin=omega_min, omax=omega_max, n_o=n_omega, nmf=norm_factor, show=show, ref_spctrm=refer_spectrum)
         self.mnts.append(mnt)
 
     def run(self, skipping=5, vmin=-1., vmax=1., **kwargs):
