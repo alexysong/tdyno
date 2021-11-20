@@ -559,17 +559,17 @@ class RT2:
         while ttt < self.Nt:
             # print(self.t * self.dt)
             if not self.psd:
-                t1 = time.process_time()
+                t1 = time.perf_counter()
                 self.uf()
-                t2 = time.process_time()
+                t2 = time.perf_counter()
                 if self.mnts is not None and self.mnts:
                     if self.plrz == 'Hz':
                         for mnt in self.mnts:
-                            mnt.rnf(self.Hz)
+                            mnt.rnf(self.Hz, self.Ex, self.Ey)
                     else:
                         for mnt in self.mnts:
-                            mnt.rnf(self.Ez)
-                t3 = time.process_time()
+                            mnt.rnf(self.Ez, self.Hx, self.Hy)
+                t3 = time.perf_counter()
                 if self.t % self.skp == 0:
                     self.up()
                     if self.mnts is not None and self.mnts:
@@ -577,11 +577,11 @@ class RT2:
                             mnt.up()
                     # plt.pause(0.0001)
                     self.fig.canvas.flush_events()
-                t4 = time.process_time()
+                t4 = time.perf_counter()
                 if self.t % self.skp == 0:
                     if self.if_vid_rec and not self.if_vid_rec_ps:
                         self.vid_wtr.grab_frame()
-                t5 = time.process_time()
+                t5 = time.perf_counter()
                 print('Computation time: {:.5f} | Monitor time: {:.5f} | Plotting time: {:.5f}'.format((t2-t1), (t3-t2), (t4 - t3)))
                 ttt += 1
                 self.t += 1

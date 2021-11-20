@@ -3,15 +3,14 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from warnings import warn
-from typing import Callable, Iterator, Union, Optional, List
 from .cnst import Cnst
 from .s2t import S2T
 from .pct import PCT
 from .sc_tp_t import Hm, HP, Gsn
 from .sc2t import PS2, TSS2
 from .rt2 import RT2
-from .mnt_t import MntPntAmp
-from .mnt_t import MntMltPntAmp
+from tdyno.mnt.mnt_t_fa import MntMltPntAmp
+from tdyno.mnt.mnt_t_poyn import Mnt2DSqPoynU
 
 
 class TDyno:
@@ -469,6 +468,42 @@ class TDyno:
         else:
             show = 'energy spectral density'
         mnt = MntMltPntAmp(self.st, coords, dt=self.dt, td=delay, wts=weights, omin=omega_min, omax=omega_max, n_o=n_omega, nmf=norm_factor, show=show, ref_spctrm=refer_spectrum)
+        self.mnts.append(mnt)
+
+    def add_poynting_monitor(self,
+                             xmin=None, xmax=None, ymin=None, ymax=None,
+                             delay=None,
+                             omega_min=None, omega_max=None, n_omega=None,
+                             norm_factor=None, refer_spectrum=None,
+                             sides='all'):
+        """
+        Add Poynting flux monitor as a square box. Tracks the total energy flux from inside the box to outside in real time and calculates the spectrum.
+
+        Parameters
+        ----------
+        xmin : float
+        xmax : float
+        ymin : float
+        ymax : float
+        delay : float
+        omega_min : float
+        omega_max : float
+        n_omega : int
+        norm_factor : float
+        refer_spectrum : np.ndarray
+        sides : str
+            Can be "all", or any combinations (any order) of 'l', 'r', 't', 'b'.
+
+        Returns
+        -------
+
+        """
+        mnt = Mnt2DSqPoynU(st=self.st,
+                           xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax,
+                           dt=self.dt, td=delay,
+                           omin=omega_min, omax=omega_max, n_o=n_omega,
+                           nmf=norm_factor, ref_spctrm=refer_spectrum,
+                           whr=sides, plrz=self.polarization)
         self.mnts.append(mnt)
 
     def run(self, skipping=5, vmin=-1., vmax=1., **kwargs):

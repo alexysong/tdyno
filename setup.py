@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setup(
     name='tdyno',
-    version='0.1.2',
+    version='0.1.3',
     description='FDTD with dynamic modulations in the refractive index or the gain/loss in materials.',
     long_description=readme,
     long_description_content_type="text/markdown",
@@ -14,7 +14,7 @@ setup(
     # check https://pypi.org/pypi?%3Aaction=list_classifiers for classifiers
     classifiers=[
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: >= 3.6',
         'Topic :: Scientific/Engineering',
         'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
     ],

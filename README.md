@@ -33,7 +33,9 @@ T-Dyno natively supports the following features:
 
 *   Monitors
 
-    Point monitors, both wave amplitude and power spectral density.
+    Point monitors: weighted sum of the wave amplitudes on a set of points. Can the energy spectral density, power spectral density, number flux spectrum and number flux rate spectrum.
+
+    Poynting energy flux monitor: monitor the real-time energy flux through a box or any edges of the box, from inside to outside. Calculate the frequency-space integral Poynting flux spectrum.
 
 *   User interface
 
@@ -51,7 +53,7 @@ Or,
 
 ## Requirements
 
--   Python 2.7 or 3.6
+-   Python 2.7 or >= 3.6
 -   Numpy >= 1.11.3
 -   matplotlib >= 2.0.0
 -   scipy >= 0.19.0
@@ -77,7 +79,7 @@ The `examples` in the `examples/` folder are the easiest places to get started w
 
     This example contains a waveguide under dynamic modulations. The modulation can be in the refractive index or in the gain/loss.
 
-    This example also contain several point monitors to measure wave intensities and calculate the spectrum.
+    This example also contain several point monitors and a Poynting monitor to measure wave intensities and calculate the spectrum.
 
     https://user-images.githubusercontent.com/55603472/130178495-1d9e19fb-0cf3-4a73-9e2b-c7f018962742.mp4
 

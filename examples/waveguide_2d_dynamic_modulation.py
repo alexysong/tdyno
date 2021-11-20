@@ -168,6 +168,14 @@ tdyno.add_point_monitors(coords=coords, weights=wts, omega_min=2*np.pi*0.15, ome
 wts = [1., -1.]  # By subtracting the field values at symmetric locations, we get the odd mode.
 tdyno.add_point_monitors(coords=coords, weights=wts, omega_min=2*np.pi*0.15, omega_max=2*np.pi*0.225, n_omega=200)
 
+
+# Poynting monitor can record the integral Poynting flux through a rectangle box. It also calculate the spectrum of the integral Poynting flux.
+# `sides` can be either `all`, or any combinations of `t`, `b`, `l`, `r`, meaning choose certain edges of top, bottom, left, or right to include.
+# After running simulation, can click "save" button in each monitor window to save the respective data.
+tdyno.add_poynting_monitor(xmax=xmax-6, ymin=-0.7, ymax=0.7,
+                           delay=4000,
+                           omega_min=2*np.pi*0.15, omega_max=2*np.pi*0.225, sides='r')
+
 # ==============   Running simulation   =================
 tdyno.run(skipping=5, vmin=-1., vmax=1.)
 
