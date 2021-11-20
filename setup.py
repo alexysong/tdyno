@@ -14,7 +14,7 @@ setup(
     # check https://pypi.org/pypi?%3Aaction=list_classifiers for classifiers
     classifiers=[
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: >= 3.6',
+        'Programming Language :: Python :: 3',
         'Topic :: Scientific/Engineering',
         'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
     ],
