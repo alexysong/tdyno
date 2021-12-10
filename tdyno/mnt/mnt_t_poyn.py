@@ -241,10 +241,16 @@ class Mnt2DSqPoyn:
         # patch
         self.pchs = []
         if whr == 'all':
-            xmin = xmin
-            ymin = ymin
+            xmi = xmin
+            ymi = ymin
             width = xmax - xmin
             height = ymax - ymin
+            pch = {'shp': 'rct',
+                   'xy': (xmi, ymi),
+                   'width': width,
+                   'height': height
+                   }
+            self.pchs.append(pch)
         else:
             for w in whr:
                 if w == 'l':
