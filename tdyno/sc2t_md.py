@@ -34,7 +34,7 @@ class TSSMD2:
         g               :   Hm or Gsn or HP
                             source temporal profile
         xi              :   array_like
-                            1d array, spatial points where f is defined. See notes on `f` below.
+                            1d array, spatial points where f is defined, coordinate transverse to the waveguide. See notes on `f` below.
         f               :   array_like
                             1d array value of f, the waveguide mode.
 
@@ -49,9 +49,16 @@ class TSSMD2:
                             If `xi` and `f` were simulation results of `tdyno` with a waveguide in the x direction, then for `Ez` polarization `xi` are the Yee cell corners i.e. grid points in y, while for `Hz` polarization `xi` are the half grid points in y in each Yee cell.
 
         epsi            :   array_like
-                            1d array, the permittivity profile in the transverse direction of the waveguide. See notes in `mu` below.
+                            2d array. The permittivity profile along the transverse direction of the waveguide.
+
+                            `epsi[i]` defines the values at index i. It has 2 elements, `epsi[i][0]` is the component  along the waveguide direction, `epsi[i][1]` is transverse to the waveguide.
+
+                            See notes in `mu` below.
+
         mu              :   array_like
-                            1d array, the permeability profile in the transverse direction of the waveguide.
+                            2d array. The permeability profile along the transverse direction of the waveguide.
+
+                            `mu[i]` defines the values at index i. It has 2 elements, `mu[i][0]` is the component along the waveguide direction, `mu[i][1]` is transverse to the waveguide.
 
                             For Ez (TM) mode, epsi[i] and mu[i] defines the value in the interval xi[i] to xi[i+1].
 
@@ -126,17 +133,22 @@ class TSSMD2:
 
         self.ff = interp1d(y, f, fill_value="extrapolate")
 
-        epsi_h = np.array([epsi, epsi]).T.ravel()
+        epsi_x = epsi[:, 0]
+        epsi_y = epsi[:, 1]
+        mu_x = mu[:, 0]
+        mu_y = mu[:, 1]
+
+        epsi_h = np.array([epsi_y, epsi_y]).T.ravel()
         self.epsif = interp1d(y_h, epsi_h, fill_value="extrapolate")
-        mu_h = np.array([mu, mu]).T.ravel()
+        mu_h = np.array([mu_y, mu_y]).T.ravel()
         self.muf = interp1d(y_h, mu_h, fill_value="extrapolate")
 
         fp, fm = self.ff([xp, xm])
         pyff = (np.append(f[1:], fp) - f) / (yp - y)
         pybf = (f - np.insert(f[:-1], 0, fm)) / (y - ym)
-        pyffmu = pyff / mu
+        pyffmu = pyff / mu_x
         self.pfmf = interp1d(yhp, pyffmu, fill_value="extrapolate")
-        pybfep = pybf / epsi
+        pybfep = pybf / epsi_x
         self.pfef = interp1d(yhm, pybfep, fill_value="extrapolate")
 
         self.omg = omg

@@ -79,13 +79,13 @@ class S2T:
 
         # list of box objects
         self.bxs: List[Bx2] = []
-        self.bxs_sp = []
-        self.bxs_Lz = []
-        self.bxs_dmLz = []
-        self.bxs_Dr = []
-        self.bxs_dmri = []
-        self.bxs_lg = []
-        self.bxs_dmlg = []
+        self.bxs_sp: List[Bx2] = []
+        self.bxs_Lz: List[Bx2] = []
+        self.bxs_dmLz: List[Bx2] = []
+        self.bxs_Dr: List[Bx2] = []
+        self.bxs_dmri: List[Bx2] = []
+        self.bxs_lg: List[Bx2] = []
+        self.bxs_dmlg: List[Bx2] = []
 
     def a_b(self,
             shp='rct',
@@ -192,8 +192,8 @@ class Bx2:
 
         Parameters
         ----------
-        gmt        :   geometry
-        mtr        :   material
+        gmt        :   Gmt2
+        mtr        :   Mtr
         """
 
         self.gmt = gmt

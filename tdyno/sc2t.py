@@ -150,7 +150,7 @@ class TSS2:
             ymax_ts_n = yy_n.max()
         self.xmin_ts_n, self.xmax_ts_n, self.ymin_ts_n, self.ymax_ts_n = [xmin_ts_n, xmax_ts_n, ymin_ts_n, ymax_ts_n]
 
-        # indexing from the bulk
+        # indexing of the edge in the bulk
         # all 2d arrays
         self.i_te_TM = (yy_n == ymax_ts_n) * (xx_n <= xmax_ts_n) * (xx_n > xmin_ts_n)
         self.i_be_TM = (yy_n == ymin_ts_n) * (xx_n <= xmax_ts_n) * (xx_n > xmin_ts_n)
@@ -169,7 +169,6 @@ class TSS2:
         self.i_co_bl_TE = self.i_le_TE * self.i_be_TE
 
         # edge indexing
-        # self.i = []
         self.tblr = [False] * 4
         self.iB_s = np.zeros([st.Ny, st.Nx], dtype=bool)
         # self.iD_s = np.zeros([_st.Ny, _st.Nx], dtype=bool)

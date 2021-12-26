@@ -436,9 +436,14 @@ class TDyno:
                                     If `xi` and `f` were simulation results of `tdyno` with a waveguide in the x direction, then for `Ez` polarization `xi` are the Yee cell corners i.e. grid points in y, while for `Hz` polarization `xi` are the half grid points in y in each Yee cell.
 
         epsi                    :   array_like
-                                    1d array, the permittivity profile in the transverse direction of the waveguide.
+                                    2d array. The permittivity profile along the transverse direction of the waveguide.
+
+                                    `epsi[i]` defines the values at index i. It has 2 elements, `epsi[i][0]` is the component  along the waveguide direction, `epsi[i][1]` is transverse to the waveguide.
+
         mu                      :   array_like
-                                    1d array, the permeability profile in the transverse direction of the waveguide.
+                                    2d array. The permeability profile along the transverse direction of the waveguide.
+
+                                    `mu[i]` defines the values at index i. It has 2 elements, `mu[i][0]` is the component along the waveguide direction, `mu[i][1]` is transverse to the waveguide.
 
         omega                   :   float
                                     intended frequency of the waveguide mode. This frequency will also be used for ndc, i.e. the phase velocity of the source field will be the numeric phase velocity at this frequency

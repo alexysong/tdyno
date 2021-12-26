@@ -165,7 +165,9 @@ class Mnt2DSqPoyn:
             warn('Source top boundary outside of the solving space. It has been reset to the top edge of the solving space.')
             ymax_n = yy_n.max()
         self.xmin_n, self.xmax_n, self.ymin_n, self.ymax_n = [xmin_n, xmax_n, ymin_n, ymax_n]
-        # bulk indexing
+
+        # indexing of the edge in the bulk
+        # all 2d arrays
         self.i_te_TM = (yy_n == ymax_n) * (xx_n <= xmax_n) * (xx_n > xmin_n)
         self.i_be_TM = (yy_n == ymin_n) * (xx_n <= xmax_n) * (xx_n > xmin_n)
         self.i_le_TM = (xx_n == xmin_n) * (yy_n <= ymax_n) * (yy_n > ymin_n)
