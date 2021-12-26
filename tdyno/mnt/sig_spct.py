@@ -15,7 +15,7 @@ class SigSpct:
         ----------
         dt : float
             time step length
-        td : float
+        td : int
             time steps delay before starting to calculate the spectrum
         omin : float
             lower bound of omega
@@ -31,7 +31,7 @@ class SigSpct:
             number of signals in parallel
         """
         if dt is None:
-            dt = 1.
+            dt = 1
         self.dt = dt
         if td is None:
             td = 0.

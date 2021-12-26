@@ -178,6 +178,7 @@ class Mnt2DSqPoyn:
         #
         self.i_e_TM = self.i_re_TM + self.i_le_TM + self.i_te_TM + self.i_be_TM
         self.i_e_TE = self.i_re_TE + self.i_le_TE + self.i_te_TE + self.i_be_TE
+
         # monitor edge indexing
         if plrz is None:
             plrz = 'Ez'
@@ -232,7 +233,7 @@ class Mnt2DSqPoyn:
                         self.d.append(st.dy)
         else:
             warn('Polarization not recognized. No monitor value recorded.')
-            self.i = np.zeros([st.Ny, st.Nx], dtype=bool)
+            self.i = [np.zeros([st.Ny, st.Nx], dtype=bool)]  # todo: should here be a list or not?
 
         self.mpps = [MntArrPoyn(dt, td, omin, omax, n_o, nmf, ref_spctrm, n=np.where(j)[0].size) for j in self.i]  # list, length equal to number of edges included, each element corresponds to one edge
         self.s = []

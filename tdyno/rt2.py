@@ -10,9 +10,14 @@ from matplotlib.gridspec import GridSpec
 from matplotlib.widgets import Button, CheckButtons, TextBox
 from matplotlib.animation import FFMpegWriter
 
-from .dom import DOM
-from .a_pchs import a_pchs
-from .plot_field_2d_in_ax_3 import PlotField2DinAx
+from tdyno.dom import DOM
+from tdyno.a_pchs import a_pchs
+from tdyno.plot_field_2d_in_ax_3 import PlotField2DinAx
+from tdyno.s2t import S2T
+from tdyno.sc2t import PS2, TSS2
+from tdyno.pct import PCT
+from tdyno.mnt.mnt_t_fa import MntPntAmp, MntMltPntAmp
+from tdyno.mnt.mnt_t_poyn import Mnt2DSqPoynU
 
 
 class RT2:
@@ -41,7 +46,7 @@ class RT2:
         mu0                                 :   float
         st                                  :   S2T
                                                 the structure to be solved
-        scs                                 :   list[Union[PS2, TSS2]]
+        scs                                 :   list[PS2, TSS2]
                                                 sources
         dt                                  :   float
         Nt                                  :   int
@@ -56,7 +61,7 @@ class RT2:
                                                 the frequency for numeric dispersion compensation.
         md                                  :   str
                                                 mode, either 'HDE' or 'BHDE'
-        mnts                                :   list[Union[MntPntAmp, MntMltPntAmp]]
+        mnts                                :   list[MntPntAmp, MntMltPntAmp, Mnt2DSqPoynU]
                                                 list of monitors
         skp                                 :   int
                                                 skipping in plotting.
@@ -65,6 +70,10 @@ class RT2:
         -----------------
         kwargs                              :   dict
                                                 key word arguments for PlotField2DinAx
+
+        Returns
+        -------
+        object
 
 
         Attributes

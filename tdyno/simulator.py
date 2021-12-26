@@ -3,15 +3,18 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from warnings import warn
-from .cnst import Cnst
-from .s2t import S2T
-from .pct import PCT
-from .sc_tp_t import Hm, HP, Gsn
-from .sc2t import PS2, TSS2
-from .rt2 import RT2
+from tdyno.cnst import Cnst
+from tdyno.s2t import S2T
+from tdyno.pct import PCT
+from tdyno.sc_tp_t import Hm, HP, Gsn
+from tdyno.sc2t import PS2, TSS2
+from tdyno.sc2t_md import TSSMD2
+from tdyno.rt2 import RT2
 from tdyno.mnt.mnt_t_fa import MntMltPntAmp
 from tdyno.mnt.mnt_t_poyn import Mnt2DSqPoynU
 
+
+# todo: API use frequency instead of omega. (however, k contains 2pi anyway?)
 
 class TDyno:
     def __init__(self):
@@ -304,7 +307,13 @@ class TDyno:
 
     def use_ndc(self, if_use_ndc, omega):
         """
-        use numeric dispersion correction
+        Use numeric dispersion correction in the main solver. This corrects the phase velocity of waves in vacuum to be light speed.
+
+        Notes
+        -----
+        This is not to be confused with the numeric dispersion correction in sources. If numeric dispersion correction is used in sources, then the user shouldn't enable this in the main solver.
+
+        In general, increasing spatial resolution reduces numeric dispersion.
 
         Parameters
         ----------
@@ -319,9 +328,6 @@ class TDyno:
         if if_use_ndc:
             self.if_ndc = True
             self.omg_ndc = omega
-            for sc in self.scs:
-                if hasattr(sc, 'set_ndc') and callable(getattr(sc, 'set_ndc')):
-                    sc.set_ndc(if_use_ndc, omega)
             if self.rt:
                 self.rt.set_ndc(if_use_ndc, omega)
         else:
@@ -347,7 +353,11 @@ class TDyno:
 
         self.scs.append(sc)
 
-    def add_tfsf_source(self, xmin, xmax, ymin, ymax, kx, ky, amp, t_profile, epsi=1., mu=1., sides='all'):
+    def add_tfsf_source(self, xmin, xmax, ymin, ymax,
+                        kx, ky, amp, t_profile,
+                        epsi=1., mu=1.,
+                        if_ndc=False, omega_ndc=None,
+                        sides='all'):
         """
         Add a TFSF source in the space
 
@@ -357,39 +367,112 @@ class TDyno:
                                     four corners of TFSF source region
         kx, ky                  :   float
                                     kx and ky determine incident direction.
+
                                     The magnitudes of kx and ky don't matter, only the direction matters.
+
                                     The incident wave is assumed to be travelling in free space so it's k is determined by its frequency.
+
         amp                     :   float
                                     amplitude of the incident wave
         t_profile               :   Hm or Gsn or HP
                                     source temporal profile
         epsi, mu                :   float
+        if_ndc                  :   bool
+                                    if use numeric dispersion correction. If enabled, the phase velocity of the source fields will be the exact numerical one, not the analytic light speed in the space.
+        omega_ndc               :   float
+                                    the phase velocity of the source field will be the numeric phase velocity at this frequency
         sides                   :   str
-                                    ['all'|'top'|'bottom'|'left'|'right']
+                                    {'all', combinations of 't', 'b', 'l', 'r'}
+
                                     Controls which sides of the TFSF source exist.
+
                                     Default to be 'all', i.e. TFSF source in a rectangular region.
-                                    If choose any of the sides, it becomes a uni-directional plane-wave source.
+
+                                    Can choose any combination of 't', 'b', 'l', 'r' for top, bottom, left and right.
+
+                                    If choose any ONE of the sides, it becomes a uni-directional plane-wave source.
 
         Returns
         -------
 
         """
 
-        if sides == 'left':
-            where = 'l'
-        elif sides == 'right':
-            where = 'r'
-        elif sides == 'top':
-            where = 't'
-        elif sides == 'bottom':
-            where = 'b'
-        elif sides == 'all':
-            where = 'all'
-        else:
-            where = 'all'
-            warn('The side of TFSF source not recognized. Default to "all".', UserWarning)
+        sc = TSS2(xmin, xmax, ymin, ymax, kx, ky, amp, t_profile, self.st, self.c.c0, self.dt, plrz=self.polarization, if_ndc=if_ndc, omg_ndc=omega_ndc, epsi=epsi, mu=mu, whr=sides)
 
-        sc = TSS2(xmin, xmax, ymin, ymax, kx, ky, amp, t_profile, self.st, self.c.c0, self.dt, plrz=self.polarization, if_ndc=self.if_ndc, omg_ndc=self.omg_ndc, epsi=epsi, mu=mu, whr=where)
+        self.scs.append(sc)
+
+    def add_tfsf_mode_source(self, xmin, xmax, ymin, ymax,
+                             kx, ky, amp, t_profile,
+                             xi, f, epsi, mu, omega,
+                             xi0=None, reverse_direction=False,
+                             if_ndc=False,
+                             sides='all'):
+        """
+        Add a TFSF source of a waveguide mode.
+
+        Parameters
+        ----------
+        xmin, xmax, ymin, ymax  :   float
+                                    four corners of TFSF source region
+        kx, ky                  :   float
+                                    (kx, ky) determine the wave propagation constant. Both the magnitude and the direction of (kx, ky) matters. This is different from `add_tfsf_source`.
+        amp                     :   float
+                                    amplitude of the incident wave
+        t_profile               :   Hm or Gsn or HP
+                                    source temporal profile
+        xi                      :   array_like
+                                    1d array, spatial points where f is defined. See notes on `f` below.
+        f                       :   array_like
+                                    1d array value of f, the waveguide mode.
+
+                                    For Ez mode, `f` is Ez. For Hz mode, `f` is Hz.
+
+                                    `xi` and `f` can be analytically calculated or numerically simulated.
+
+                                    `xi` are the actual physical points where `f` is defined.
+                                    For Ez mode, `xi` is where Ez is defined. For Hz mode, `xi` is where Hz is defined.
+                                    In fact `xi` does not know about Yee cells in general (for example, analytically simulated).
+
+                                    If `xi` and `f` were simulation results of `tdyno` with a waveguide in the x direction, then for `Ez` polarization `xi` are the Yee cell corners i.e. grid points in y, while for `Hz` polarization `xi` are the half grid points in y in each Yee cell.
+
+        epsi                    :   array_like
+                                    1d array, the permittivity profile in the transverse direction of the waveguide.
+        mu                      :   array_like
+                                    1d array, the permeability profile in the transverse direction of the waveguide.
+
+        omega                   :   float
+                                    intended frequency of the waveguide mode. This frequency will also be used for ndc, i.e. the phase velocity of the source field will be the numeric phase velocity at this frequency
+        xi0                     :   float
+                                    signed distance from reference line (xi=0) to origin
+        reverse_direction       :   bool
+                                    If `True`, reverse `beta` direction, while keeping profile `f` unchanged.
+
+                                    Can instead manually set kx and ky to negative, in which case it is rotating both `beta` and `f` 180 degrees. Note, for asymmetric waveguide, modal profile `f` is asymmetric.
+        if_ndc                  :   bool
+                                    if use numeric dispersion correction. If enabled, the phase velocity of the source fields will be the exact numerical one, not the analytic light speed in the space.
+
+                                    If True, do not use ndc in the main update equations.
+
+        sides                   :   str
+                                    {'all', combinations of 't', 'b', 'l', 'r'}
+
+                                    Controls which sides of the TFSF source exist.
+
+                                    Default to be 'all', i.e. TFSF source in a rectangular region.
+
+                                    Can choose any combination of 't', 'b', 'l', 'r' for top, bottom, left and right.
+
+                                    If choose any ONE of the sides, it becomes a uni-directional plane-wave source.
+
+        Notes
+        -----
+        The source does not know the actual structure in the solving space. This is to say, if the structure is the intended waveguide then this mode will be generated in the TF/SF fashion.
+
+        To generate the waveguide mode, the permittivity and permeability are needed and are supplied. Again, this is regardless of the actual structure in the solving space.
+
+        """
+
+        sc = TSSMD2(xmin, xmax, ymin, ymax, kx, ky, amp, t_profile, xi, f, epsi, mu, omega, self.st, self.c.c0, self.dt, xi0=xi0, reverse_direction=reverse_direction, plrz=self.polarization, if_ndc=if_ndc, omg_ndc=omega, whr=sides)
 
         self.scs.append(sc)
 

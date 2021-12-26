@@ -4,6 +4,7 @@
 import numpy as np
 import numpy.linalg as la
 from warnings import warn
+from typing import List, Union
 
 
 class S2T:
@@ -16,7 +17,7 @@ class S2T:
         Parameters
         ----------
         xmin, xmax, dx, ymin, ymax, dy      :   float
-        epsi_bg, mu_bg                      :   float
+        epsi_bg, mu_bg                      :   Union[float, np.ndarray]
         x, y                                :   ndarray
                                                 1d ndarray, If supplied, override xmin etc.
         """
@@ -77,7 +78,7 @@ class S2T:
         self.xx, self.yy = np.meshgrid(self.x, self.y)
 
         # list of box objects
-        self.bxs = []
+        self.bxs: List[Bx2] = []
         self.bxs_sp = []
         self.bxs_Lz = []
         self.bxs_dmLz = []
