@@ -46,7 +46,7 @@ class RT2:
         mu0                                 :   float
         st                                  :   S2T
                                                 the structure to be solved
-        scs                                 :   list[PS2, TSS2]
+        scs                                 :   list[PS2 | TSS2]
                                                 sources
         dt                                  :   float
         Nt                                  :   int
@@ -61,7 +61,7 @@ class RT2:
                                                 the frequency for numeric dispersion compensation.
         md                                  :   str
                                                 mode, either 'HDE' or 'BHDE'
-        mnts                                :   list[MntPntAmp, MntMltPntAmp, Mnt2DSqPoynU]
+        mnts                                :   list[MntMltPntAmp | MntPntAmp | Mnt2DSqPoynU]
                                                 list of monitors
         skp                                 :   int
                                                 skipping in plotting.
@@ -441,10 +441,10 @@ class RT2:
             if self.mnts is not None and self.mnts:
                 if self.plrz == 'Hz':
                     for mnt in self.mnts:
-                        mnt.rnf(self.Hz)
+                        mnt.rnf(self.Hz, self.Ex, self.Ey)
                 else:
                     for mnt in self.mnts:
-                        mnt.rnf(self.Ez)
+                        mnt.rnf(self.Ez, self.Hx, self.Hy)
             t3 = time.process_time()
             self.up()
             if self.mnts is not None and self.mnts:

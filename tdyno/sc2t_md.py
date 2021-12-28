@@ -197,6 +197,7 @@ class TSSMD2:
         self.i_be_TM = (yy_n == ymin_ts_n) * (xx_n <= xmax_ts_n) * (xx_n > xmin_ts_n)
         self.i_le_TM = (xx_n == xmin_ts_n) * (yy_n <= ymax_ts_n) * (yy_n > ymin_ts_n)
         self.i_re_TM = (xx_n == xmax_ts_n) * (yy_n <= ymax_ts_n) * (yy_n > ymin_ts_n)
+        # todo: for modal source should always include min exclue max (that's how modal profile should be recorded)
         #
         self.i_te_TE = (yy_n == ymax_ts_n) * (xx_n < xmax_ts_n) * (xx_n >= xmin_ts_n)
         self.i_be_TE = (yy_n == ymin_ts_n) * (xx_n < xmax_ts_n) * (xx_n >= xmin_ts_n)

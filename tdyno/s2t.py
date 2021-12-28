@@ -207,7 +207,8 @@ class MtrBsc(object):
 
         Parameters
         ----------
-        epsi, mu    :   float or Tuple[float, float, float] or 3x3 ndarray
+        epsi, mu    :   float | (float) | numpy.ndarray
+                        permittivity and permeability. if tuple, it is length of 3. if ndarray, it has shape (3, 3)
         kwargs      :
                         other kwargs not related to materials
         """
@@ -241,6 +242,7 @@ class Mtr(MtrBsc):
         Parameters
         ----------
         knd                             :   str
+                                            Options are:
                                             'sp' (simple),
                                             'Lz' (Lorentz),
                                             'dmLz' (dynamic modulation of delta epsi),
@@ -248,9 +250,14 @@ class Mtr(MtrBsc):
                                             'lg' (loss and gain),
                                             'dmri' (dynamic modulation of real part of index),
                                             'dmlg' (dynamic modulation of loss and gain).
-        epsi_infty_b, mu_infty_b        :   float or Tuple[float, float, float] or 3x3 ndarray
+        epsi_infty_b                    :   float | (float) | numpy.ndarray
+        mu_infty_b                      :   float | (float) | numpy.ndarray
+                                            if tuple it has len 3, if ndarray it has shape (3, 3).
+
                                             The high-frequency permittivity and permeability for use in Lorentz and Drude.
-                                            If not supplied, fall back to epsi_b and mu_b.
+
+                                            If not supplied, fall back to `epsi_b` and `mu_b`.
+
         omgs_rsn                        :   list[float]
                                             resonance frequencies, for use in Lorentz or Drude
         dlts_epsi                       :   list[float]

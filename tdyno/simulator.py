@@ -12,6 +12,7 @@ from tdyno.sc2t_md import TSSMD2
 from tdyno.rt2 import RT2
 from tdyno.mnt.mnt_t_fa import MntMltPntAmp
 from tdyno.mnt.mnt_t_poyn import Mnt2DSqPoynU
+from tdyno.mnt.mnt_t_md import MntWgMdU
 
 
 # todo: API use frequency instead of omega. (however, k contains 2pi anyway?)
@@ -23,7 +24,7 @@ class TDyno:
 
         """
         self.c = Cnst()
-        self.st = None
+        self.st: S2T = None
         self.scs = []
         self.pc = None
         self.mnts = []
@@ -73,7 +74,7 @@ class TDyno:
         if not dt:
             dt = 1. / 2. * np.sqrt(dx ** 2 + dy ** 2)
 
-        self.st = S2T(xmin, xmax, dx, ymin, ymax, dy, epsi, mu, x=x, y=y)
+        self.st: S2T = S2T(xmin, xmax, dx, ymin, ymax, dy, epsi, mu, x=x, y=y)
         self.set_polarization(polarization)
         self.set_dt(dt)
         self.set_Nt(Nt)
@@ -524,7 +525,7 @@ class TDyno:
         """
         self.md = mode
 
-    def add_point_monitors(self, coords, delay=0., weights=None, omega_min=0., omega_max=2., n_omega=100, norm_factor=1., flux=False, refer_spectrum=None):
+    def add_point_monitors(self, coords, delay=0, weights=None, omega_min=0., omega_max=2., n_omega=100, norm_factor=1., flux=False, refer_spectrum=None):
         """
         Add monitors to monitor the amplitude of the field on multi points. Record the amplitudes on each, do weighted sum, and do Fourier Transform.
         The monitors only record Ez and Hz for the two corresponding polarizations, respectively.
@@ -573,7 +574,8 @@ class TDyno:
         xmax : float
         ymin : float
         ymax : float
-        delay : float
+        delay : int
+            delay starting monitor by this many time steps
         omega_min : float
         omega_max : float
         n_omega : int
@@ -592,6 +594,33 @@ class TDyno:
                            omin=omega_min, omax=omega_max, n_o=n_omega,
                            nmf=norm_factor, ref_spctrm=refer_spectrum,
                            whr=sides, plrz=self.polarization)
+        self.mnts.append(mnt)
+
+    def add_mode_monitor(self,
+                         x=None, y=None,
+                         xmin=None, xmax=None, ymin=None, ymax=None,
+                         ):
+        """
+        A monitor to record modal profile at an interface in either x or y.
+
+        Parameters
+        ----------
+        x : float
+            x position of the interface if it's in y
+        y : float
+            y position of the interface if it's in x
+        xmin, xmax, ymin, ymax : float
+            min and max of the interface. Default to the edge of the solving space.
+
+        Notes
+        -----
+        If `x` is supplied, `ymin` and `ymax` are needed. If `y is supplied, `xmin` and `xmax` are needed. If both `x` and `y` are supplied, `y` is ignored.
+        """
+
+        mnt = MntWgMdU(st=self.st,
+                       x=x, y=y,
+                       xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax,
+                       plrz=self.polarization)
         self.mnts.append(mnt)
 
     def run(self, skipping=5, vmin=-1., vmax=1., **kwargs):

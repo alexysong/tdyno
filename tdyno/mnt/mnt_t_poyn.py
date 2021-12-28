@@ -110,6 +110,7 @@ class MntArrPoyn:
 class Mnt2DSqPoyn:
     # todo: take modal profile, get Poynting in specific mode
     # todo: get Poynting flux rate in moving time-window
+    # todo: left edge poynting flux is negative!
 
     def __init__(self,
                  st,
@@ -133,12 +134,11 @@ class Mnt2DSqPoyn:
         ymin : float
         ymax : float
         dt : float
-        td : float
+        td : int
         omin : float
         omax : float
         n_o : int
         nmf : float
-        show : str
         ref_spctrm : np.ndarray
         whr : str
             Controls which sides of the TFSF source exist.
