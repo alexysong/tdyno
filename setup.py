@@ -1,11 +1,11 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open('README.md', 'r') as f:
     readme = f.read()
 
 setup(
     name='tdyno',
-    version='0.1.4',
+    version='0.1.5',
     description='FDTD with dynamic modulations in the refractive index or the gain/loss in materials.',
     long_description=readme,
     long_description_content_type="text/markdown",
@@ -21,7 +21,7 @@ setup(
     keywords=['fdtd', 'dynamic modulation'],
     author='Alex Y. Song',
     author_email='song.alexy@gmail.com',
-    packages=['tdyno', 'examples'],
+    packages=find_packages(),
     install_requires=[
         'numpy >= 1.11.3',
         'scipy >= 0.19.0',
