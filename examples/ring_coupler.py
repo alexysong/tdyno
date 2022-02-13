@@ -89,7 +89,7 @@ tau = 10.
 cw = tdyno.add_source_temporal('cw', omega, tau=tau)
 
 # ============   set up sources   ============
-tdyno.add_tfsf_source(xmin=1., xmax=xmax - 2.5, ymin=1., ymax=1.5, kx=1., ky=0., amp=1., t_profile=cw, sides='left', epsi=12.)
+tdyno.add_tfsf_source(xmin=1., xmax=xmax - 2.5, ymin=1., ymax=1.5, kx=1., ky=0., amp=1., t_profile=cw, sides='l', epsi=12.)
 
 # ===============   PML   =================
 tdyno.add_pml(poly_ord=3.5, ratio=1.e-7, npx=15, npy=15)

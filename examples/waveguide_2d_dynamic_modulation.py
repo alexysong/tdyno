@@ -137,9 +137,9 @@ packet = tdyno.add_source_temporal('packet', omega, tau=tau)
 # ============   set up sources   ============
 # TFSF source
 # uncomment next line for left input in even mode
-tdyno.add_tfsf_source(xmin=xmin+2.5, xmax=xmax-2.5, ymin=-0.5, ymax=0.5, kx=1., ky=0., amp=1., t_profile=cw, epsi=epsi_w, sides='left')
+tdyno.add_tfsf_source(xmin=xmin+2.5, xmax=xmax-2.5, ymin=-0.5, ymax=0.5, kx=1., ky=0., amp=1., t_profile=cw, epsi=epsi_w, sides='l')
 # uncomment next line for right input in even mode
-# tdyno.add_tfsf_source(xmin=xmin+2.5, xmax=xmax-2.5, ymin=-0.5, ymax=0.5, kx=-1., ky=0., amp=1., t_profile=cw, epsi=epsi_w, sides='right')
+# tdyno.add_tfsf_source(xmin=xmin+2.5, xmax=xmax-2.5, ymin=-0.5, ymax=0.5, kx=-1., ky=0., amp=1., t_profile=cw, epsi=epsi_w, sides='r')
 
 # ============   PML   ============
 tdyno.add_pml(poly_ord=3.5, ratio=1.e-7, npx=15, npy=15)
