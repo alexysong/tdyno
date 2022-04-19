@@ -83,16 +83,16 @@ class MntWgMd:
                                               [st.dx, st.dx, st.dy, st.dy])]
 
         if xmin_n < xx_n.min():
-            warn('Source left boundary outside of the solving space. It has been reset to the left edge of the solving space.')
+            warn('Monitor left boundary outside of the solving space. It has been reset to the left edge of the solving space.')
             xmin_n = xx_n.min()
         if xmax_n > xx_n.max():
-            warn('Source right boundary outside of the solving space. It has been reset to the right edge of the solving space.')
+            warn('Monitor right boundary outside of the solving space. It has been reset to the right edge of the solving space.')
             xmax_n = xx_n.max()
         if ymin_n < yy_n.min():
-            warn('Source bottom boundary outside of the solving space. It has been reset to the bottom edge of the solving space.')
+            warn('Monitor bottom boundary outside of the solving space. It has been reset to the bottom edge of the solving space.')
             ymin_n = yy_n.min()
         if ymax_n > yy_n.max():
-            warn('Source top boundary outside of the solving space. It has been reset to the top edge of the solving space.')
+            warn('Monitor top boundary outside of the solving space. It has been reset to the top edge of the solving space.')
             ymax_n = yy_n.max()
         self._xmin_n, self._xmax_n, self._ymin_n, self._ymax_n = [xmin_n, xmax_n, ymin_n, ymax_n]
 

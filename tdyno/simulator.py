@@ -414,7 +414,14 @@ class TDyno:
         Parameters
         ----------
         xmin, xmax, ymin, ymax  :   float
+
                                     four corners of TFSF source region
+
+                                    Define the length as in the direction of the wave. Then the width of the source region can be wider than the given `xi` range.
+                                    It doesn't have to be aligned with `xi` in any sense.
+                                    The position of the waveguide modal profile is determined by the origin of the solving space and the `xi0` and is not affected by the TFSF source window postion.
+                                    Actual fields are interpolated from the input wave profile.
+
         kx, ky                  :   float
                                     (kx, ky) determine the wave propagation constant. Both the magnitude and the direction of (kx, ky) matters. This is different from `add_tfsf_source`.
         amp                     :   float
@@ -434,26 +441,27 @@ class TDyno:
                                     For Ez mode, `xi` is where Ez is defined. For Hz mode, `xi` is where Hz is defined.
                                     In fact `xi` does not know about Yee cells in general (for example, analytically simulated).
 
-                                    If `xi` and `f` were simulation results of `tdyno` with a waveguide in the x direction, then for `Ez` polarization `xi` are the Yee cell corners i.e. grid points in y, while for `Hz` polarization `xi` are the half grid points in y in each Yee cell.
+                                    If `xi` and `f` were simulation results of `tdyno` with a waveguide in the x direction, then for `Ez` polarization `xi` should be the Yee cell corners i.e. grid points in y, while for `Hz` polarization `xi` should be the half grid points in y in each Yee cell.
 
         epsi                    :   array_like
-                                    2d array. The permittivity profile along the transverse direction of the waveguide.
+                                    2d array. The permittivity profile along the transverse direction of the waveguide, defined at the physical locations of `xi`.
 
                                     `epsi[i]` defines the values at index i. It has 2 elements, `epsi[i][0]` is the component  along the waveguide direction, `epsi[i][1]` is transverse to the waveguide.
 
         mu                      :   array_like
-                                    2d array. The permeability profile along the transverse direction of the waveguide.
+                                    2d array. The permeability profile along the transverse direction of the waveguide, defined at the physical locations of `xi`.
 
                                     `mu[i]` defines the values at index i. It has 2 elements, `mu[i][0]` is the component along the waveguide direction, `mu[i][1]` is transverse to the waveguide.
 
         omega                   :   float
                                     intended frequency of the waveguide mode. This frequency will also be used for ndc, i.e. the phase velocity of the source field will be the numeric phase velocity at this frequency
         xi0                     :   float
-                                    signed distance from reference line (xi=0) to origin
+                                    signed distance from reference line (xi=0) of the input modal profile to the origin of the current solving space
         reverse_direction       :   bool
                                     If `True`, reverse `beta` direction, while keeping profile `f` unchanged.
 
                                     Can instead manually set kx and ky to negative, in which case it is rotating both `beta` and `f` 180 degrees. Note, for asymmetric waveguide, modal profile `f` is asymmetric.
+
         if_ndc                  :   bool
                                     if use numeric dispersion correction. If enabled, the phase velocity of the source fields will be the exact numerical one, not the analytic light speed in the space.
 

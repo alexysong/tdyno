@@ -25,7 +25,14 @@ class TSSMD2:
         Parameters
         ----------
         xmin_ts, xmax_ts, ymin_ts, ymax_ts :    float
+
                                                 four corners of TFSF source box
+
+                                                Define the length as in the direction of the wave. Then the width of the source region can be wider than the given `xi` range.
+                                                It doesn't have to be aligned with `xi` in any sense.
+                                                The position of the waveguide modal profile is determined by the origin of the solving space and the `xi0` and is not affected by the TFSF source window postion.
+                                                Actual fields are interpolated from the input wave profile.
+
         kx, ky          :   float
                             (kx, ky) determine the wave propagation constant. Both the magnitude and the direction of (kx, ky) matters. This is different from `add_tfsf_source`.
         amp             :   float
@@ -49,14 +56,14 @@ class TSSMD2:
                             If `xi` and `f` were simulation results of `tdyno` with a waveguide in the x direction, then for `Ez` polarization `xi` are the Yee cell corners i.e. grid points in y, while for `Hz` polarization `xi` are the half grid points in y in each Yee cell.
 
         epsi            :   array_like
-                            2d array. The permittivity profile along the transverse direction of the waveguide.
+                            2d array. The permittivity profile along the transverse direction of the waveguide, defined at the physical locations of `xi`.
 
                             `epsi[i]` defines the values at index i. It has 2 elements, `epsi[i][0]` is the component  along the waveguide direction, `epsi[i][1]` is transverse to the waveguide.
 
                             See notes in `mu` below.
 
         mu              :   array_like
-                            2d array. The permeability profile along the transverse direction of the waveguide.
+                            2d array. The permeability profile along the transverse direction of the waveguide, defined at the physical locations of `xi`.
 
                             `mu[i]` defines the values at index i. It has 2 elements, `mu[i][0]` is the component along the waveguide direction, `mu[i][1]` is transverse to the waveguide.
 
@@ -77,7 +84,7 @@ class TSSMD2:
         omg             :   float
                             intended frequency
         xi0             :   float
-                            signed distance from reference line (xi=0) to origin
+                            signed distance from reference line (xi=0)  of the input modal profile to the origin of the current solving space
         reverse_direction : bool
                             If `True`, reverse `beta` direction, while keeping profile `f` unchanged.
 

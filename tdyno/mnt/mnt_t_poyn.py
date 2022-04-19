@@ -12,7 +12,7 @@ from tdyno.mnt.mnt_ui import MntUI1S1S
 class MntArrPoyn:
     def __init__(self, dt, td=None, omin=None, omax=None, n_o=None, nmf=None, ref_spctrm=None, n=None):
         """
-        Poynting flux monitor at an array of points. Records both the real time and the frequency space Poynting vectors.
+        3D Poynting flux monitor at an array of points. Records both the real time and the frequency space Poynting vectors.
 
         Parameters
         ----------
@@ -23,6 +23,8 @@ class MntArrPoyn:
         n_o : int
         nmf : float
         ref_spctrm : np.ndarray
+        n : int
+            number of spatial points
         """
         if n is None:
             n = 1
@@ -39,6 +41,7 @@ class MntArrPoyn:
         Returns
         -------
         s : list[tuple[np.ndarray, np.ndarray, np.ndarray]]
+            Each element in the list corresponds to one time step. Each element is a 3-tuple, (sx, sy, sz). Each of these are the Poynting vectors at the array of spatial points.
         """
         return self._s
 
@@ -50,7 +53,7 @@ class MntArrPoyn:
         Returns
         -------
         S : tuple[np.ndarray, np.ndarray, np.ndarray]
-            each is a complex 1d array
+            each is a complex ndarray of shape (n, n_o), representing the Poynting spectrum each of the points
         """
         return self._S
 
@@ -153,16 +156,16 @@ class Mnt2DSqPoyn:
         self.xx_n, self.yy_n = (xx_n, yy_n)
         xmin_n, xmax_n, ymin_n, ymax_n = [int(np.floor(cor / dcor)) for cor, dcor in zip([xmin + st.dx / 1e4 - st.xmin, xmax + st.dx / 1e4 - st.xmin, ymin + st.dx / 1e4 - st.ymin, ymax + st.dx / 1e4 - st.ymin], [st.dx, st.dx, st.dy, st.dy])]
         if xmin_n < xx_n.min():
-            warn('Source left boundary outside of the solving space. It has been reset to the left edge of the solving space.')
+            warn('Monitor left boundary outside of the solving space. It has been reset to the left edge of the solving space.')
             xmin_n = xx_n.min()
         if xmax_n > xx_n.max():
-            warn('Source right boundary outside of the solving space. It has been reset to the right edge of the solving space.')
+            warn('Monitor right boundary outside of the solving space. It has been reset to the right edge of the solving space.')
             xmax_n = xx_n.max()
         if ymin_n < yy_n.min():
-            warn('Source bottom boundary outside of the solving space. It has been reset to the bottom edge of the solving space.')
+            warn('Monitor bottom boundary outside of the solving space. It has been reset to the bottom edge of the solving space.')
             ymin_n = yy_n.min()
         if ymax_n > yy_n.max():
-            warn('Source top boundary outside of the solving space. It has been reset to the top edge of the solving space.')
+            warn('Monitor top boundary outside of the solving space. It has been reset to the top edge of the solving space.')
             ymax_n = yy_n.max()
         self.xmin_n, self.xmax_n, self.ymin_n, self.ymax_n = [xmin_n, xmax_n, ymin_n, ymax_n]
 
@@ -209,7 +212,7 @@ class Mnt2DSqPoyn:
                         self.d.append(st.dy)
                     elif w == 'r':
                         self.i.append(self.i_re_TE)
-                        self.n.append((0, 1))
+                        self.n.append((1, 0))
                         self.d.append(st.dy)
         elif self.plrz == 'Ez':
             if whr == 'all':
@@ -231,7 +234,7 @@ class Mnt2DSqPoyn:
                         self.d.append(st.dy)
                     elif w == 'r':
                         self.i.append(self.i_re_TM)
-                        self.n.append((0, 1))
+                        self.n.append((1, 0))
                         self.d.append(st.dy)
         else:
             warn('Polarization not recognized. No monitor value recorded.')
@@ -309,11 +312,11 @@ class Mnt2DSqPoyn:
         """
 
         # pick out the field values at the monitor edges
-        _fx, _fy, _fz, = [[f[j] for j in self.i] for f in [fx, fy, fz]]  # each is list of 1D arrays, each array corresponds to one edge
+        _fx, _fy, _fz, = [[f[j] for j in self.i] for f in [fx, fy, fz]]  # each is a list, different element corresponds to a different edge, each element is an 1D array
 
         s = 0.
         S = 0.
-        for m, x, y, z, n in zip(self.mpps, _fx, _fy, _fz, self.n):
+        for m, x, y, z, n, d in zip(self.mpps, _fx, _fy, _fz, self.n, self.d):
             if self.plrz == "Ez":
                 m.rnf(hx=x, hy=y, ez=z)
             elif self.plrz == 'Hz':
@@ -321,10 +324,10 @@ class Mnt2DSqPoyn:
             else:
                 warn("Polarization not recognized. Default to 'Hz'.")
                 m.rnf(ex=x, ey=y, hz=z)
-            for _s, _S, _n, _d in zip(m.s[-1][:2], m.S[:2], self.n, self.d):
+            for _s, _S, _n in zip(m.s[-1][:2], m.S[:2], n):
                 if _n != 0:
-                    s += np.sum(_s) * _d
-                    S += np.sum(_S, axis=0) * _d
+                    s += np.sum(_s) * d * _n
+                    S += np.sum(_S, axis=0) * d * _n
 
         self.s.append(s)
         self.S = S
